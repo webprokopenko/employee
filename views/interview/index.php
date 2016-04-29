@@ -1,5 +1,6 @@
 <?php
 
+use app\models\Interview;
 use yii\helpers\Html;
 use yii\grid\GridView;
 
@@ -26,7 +27,11 @@ $this->params['breadcrumbs'][] = $this->title;
             'first_name',
             'last_name',
             'email:email',
-            'status',
+            [
+                'attribute' => 'status',
+                'filter' => Interview::getStatusList(),
+                'value' => 'statusName',
+            ],
             'employee_id',
 
             ['class' => 'yii\grid\ActionColumn'],

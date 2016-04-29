@@ -33,7 +33,10 @@ $this->params['breadcrumbs'][] = $this->title;
             'first_name',
             'last_name',
             'email:email',
-            'status',
+            [
+                'attribute' => 'status',
+                'value' => $model->getStatusName(),
+            ],
             'reject_reason:ntext',
             'employee_id',
         ],

@@ -1,5 +1,6 @@
 <?php
 
+use app\models\Employee;
 use yii\helpers\Html;
 use yii\grid\GridView;
 
@@ -26,7 +27,11 @@ $this->params['breadcrumbs'][] = $this->title;
             'last_name',
             'address',
             'email:email',
-            'status',
+            [
+                'attribute' => 'status',
+                'filter' => Employee::getStatusList(),
+                'value' => 'statusName',
+            ],
 
             ['class' => 'yii\grid\ActionColumn'],
         ],

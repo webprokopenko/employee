@@ -4,6 +4,7 @@ namespace app\models;
 
 use Yii;
 use yii\db\ActiveRecord;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "{{%interview}}".
@@ -19,6 +20,24 @@ use yii\db\ActiveRecord;
  */
 class Interview extends ActiveRecord
 {
+    const STATUS_NEW = 1;
+    const STATUS_PASS = 2;
+    const STATUS_REJECT = 3;
+
+    public static function getStatusList()
+    {
+        return [
+            self::STATUS_NEW => 'New',
+            self::STATUS_PASS => 'Passed',
+            self::STATUS_REJECT => 'Rejected',
+        ];
+    }
+
+    public function getStatusName()
+    {
+        return ArrayHelper::getValue(self::getStatusList(), $this->status);
+    }
+
     /**
      * @inheritdoc
      */

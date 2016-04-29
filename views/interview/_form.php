@@ -1,5 +1,6 @@
 <?php
 
+use app\models\Interview;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
@@ -20,7 +21,7 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'email')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'status')->textInput() ?>
+    <?= $form->field($model, 'status')->dropDownList(Interview::getStatusList()) ?>
 
     <?= $form->field($model, 'employee_id')->textInput() ?>
 
