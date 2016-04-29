@@ -10,12 +10,7 @@ class StaffService
 {
     public function joinToInterview($lastName, $firstName, $email, $date)
     {
-        $interview = new Interview();
-        $interview->date = $date;
-        $interview->last_name = $lastName;
-        $interview->first_name = $firstName;
-        $interview->email = $email;
-        $interview->status = Interview::STATUS_NEW;
+        $interview = Interview::create($lastName, $firstName, $email, $date);
         $interview->save(false);
 
         if ($interview->email) {
