@@ -23,7 +23,7 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'email')->textInput(['maxlength' => true]) ?>
 
-    <?php if (!$model->getScenario() == Interview::SCENARIO_CREATE): ?>
+    <?php if ($model->getScenario() == Interview::SCENARIO_DEFAULT): ?>
 
         <?= $form->field($model, 'status')->dropDownList(Interview::getStatusList()) ?>
 
