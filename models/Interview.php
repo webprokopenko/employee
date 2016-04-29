@@ -71,6 +71,9 @@ class Interview extends ActiveRecord
                         ->setSubject('You are joined to interview!')
                         ->send();
                 }
+                $log = new Log();
+                $log->message = $this->last_name . ' ' . $this->first_name . ' is joined to interview';
+                $log->save();
             } elseif ($this->status == self::STATUS_PASS) {
                 if ($this->email) {
                     Yii::$app->mailer->compose('interview/pass', ['model' => $this])
@@ -79,6 +82,9 @@ class Interview extends ActiveRecord
                         ->setSubject('You are passed an interview!')
                         ->send();
                 }
+                $log = new Log();
+                $log->message = $this->last_name . ' ' . $this->first_name . ' is passed an interview';
+                $log->save();
             } elseif ($this->status == self::STATUS_REJECT) {
                 if ($this->email) {
                     Yii::$app->mailer->compose('interview/reject', ['model' => $this])
@@ -87,6 +93,9 @@ class Interview extends ActiveRecord
                         ->setSubject('You are failed an interview')
                         ->send();
                 }
+                $log = new Log();
+                $log->message = $this->last_name . ' ' . $this->first_name . ' is failed an interview';
+                $log->save();
             }
         }
 
