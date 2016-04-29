@@ -49,6 +49,48 @@ class Employee extends ActiveRecord
         return $this->last_name . ' ' . $this->first_name;
     }
 
+    public function afterSave($insert, $changedAttributes)
+    {
+        if (in_array('status', array_keys($changedAttributes)) && $this->status != $changedAttributes['status']) {
+            if ($this->status == self::STATUS_PROBATION) {
+                if ($this->email) {
+                    Yii::$app->mailer->compose('employee/probation', ['model' => $this])
+                        ->setFrom(Yii::$app->params['adminEmail'])
+                        ->setTo($this->email)
+                        ->setSubject('You are recruit on probation!')
+                        ->send();
+                    $log = new Log();
+                    $log->message = $this->last_name . ' ' . $this->first_name . ' is joined to interview';
+                    $log->save();
+                }
+            } elseif ($this->status == self::STATUS_WORK) {
+                if ($this->email) {
+                    Yii::$app->mailer->compose('employee/work', ['model' => $this])
+                        ->setFrom(Yii::$app->params['adminEmail'])
+                        ->setTo($this->email)
+                        ->setSubject('You are recruit!')
+                        ->send();
+                    $log = new Log();
+                    $log->message = $this->last_name . ' ' . $this->first_name . ' is passed an interview';
+                    $log->save();
+                }
+            } elseif ($this->status == self::STATUS_DISMISS) {
+                if ($this->email) {
+                    Yii::$app->mailer->compose('employee/dismiss', ['model' => $this])
+                        ->setFrom(Yii::$app->params['adminEmail'])
+                        ->setTo($this->email)
+                        ->setSubject('You are failed an interview')
+                        ->send();
+                    $log = new Log();
+                    $log->message = $this->last_name . ' ' . $this->first_name . ' is failed an interview';
+                    $log->save();
+                }
+            }
+        }
+
+        parent::afterSave($insert, $changedAttributes);
+    }
+
     /**
      * @inheritdoc
      */

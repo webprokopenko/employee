@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\models\Interview;
 use Yii;
 use app\models\Employee;
 use app\forms\search\EmployeeSearch;
@@ -59,13 +60,27 @@ class EmployeeController extends Controller
     /**
      * Creates a new Employee model.
      * If creation is successful, the browser will be redirected to the 'view' page.
+     * @param integer $interview_id
      * @return mixed
      */
-    public function actionCreate()
+    public function actionCreate($interview_id = null)
     {
         $model = new Employee();
 
+        if ($interview_id) {
+            $interview = $this->findInterviewModel($interview_id);
+            $model->last_name = $interview->last_name;
+            $model->first_name = $interview->first_name;
+            $model->email = $interview->email;
+        } else {
+            $interview = null;
+        }
+
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            if ($interview) {
+                $interview->status = Interview::STATUS_PASS;
+                $interview->save();
+            }
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('create', [
@@ -116,6 +131,20 @@ class EmployeeController extends Controller
     protected function findModel($id)
     {
         if (($model = Employee::findOne($id)) !== null) {
+            return $model;
+        } else {
+            throw new NotFoundHttpException('The requested page does not exist.');
+        }
+    }
+
+    /**
+     * @param integer $id
+     * @return Employee the loaded model
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    protected function findInterviewModel($id)
+    {
+        if (($model = Interview::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
