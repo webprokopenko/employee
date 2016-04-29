@@ -48,6 +48,7 @@ AppAsset::register($this);
                 ['label' => 'Dismisses', 'url' => ['/dismiss/index']],
                 ['label' => 'Bonuses', 'url' => ['/bonus/index']],
             ]],
+            ['label' => 'Logs', 'url' => ['/log/index']],
             Yii::$app->user->isGuest ? (
                 ['label' => 'Login', 'url' => ['/site/login']]
             ) : (
