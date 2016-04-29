@@ -9,6 +9,7 @@ use app\forms\search\EmployeeSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\web\ServerErrorHttpException;
 
 /**
  * EmployeeController implements the CRUD actions for Employee model.
@@ -61,6 +62,7 @@ class EmployeeController extends Controller
      * Creates a new Employee model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @param integer $interview_id
+     * @throws \yii\web\ServerErrorHttpException
      * @return mixed
      */
     public function actionCreate($interview_id = null)
@@ -76,17 +78,26 @@ class EmployeeController extends Controller
             $interview = null;
         }
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            if ($interview) {
-                $interview->status = Interview::STATUS_PASS;
-                $interview->save();
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+            $transaction = Yii::$app->db->beginTransaction();
+            try {
+                if ($interview) {
+                    $interview->status = Interview::STATUS_PASS;
+                    $interview->save();
+                }
+                $model->save(false);
+                $transaction->commit();
+                Yii::$app->session->setFlash('success', 'Employee is recruit.');
+                return $this->redirect(['view', 'id' => $model->id]);
+            } catch (\Exception $e) {
+                $transaction->rollBack();
+                throw new ServerErrorHttpException($e->getMessage());
             }
-            return $this->redirect(['view', 'id' => $model->id]);
-        } else {
-            return $this->render('create', [
-                'model' => $model,
-            ]);
         }
+
+        return $this->render('create', [
+            'model' => $model,
+        ]);
     }
 
     /**
