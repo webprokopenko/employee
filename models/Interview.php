@@ -35,6 +35,26 @@ class Interview extends ActiveRecord
         ];
     }
 
+    public function getNextStatusList()
+    {
+        if ($this->status == self::STATUS_PASS) {
+            return [
+                self::STATUS_PASS => 'Passed',
+            ];
+        } elseif ($this->status == self::STATUS_REJECT) {
+            return [
+                self::STATUS_PASS => 'Passed',
+                self::STATUS_REJECT => 'Rejected',
+            ];
+        } else {
+            return [
+                self::STATUS_NEW => 'New',
+                self::STATUS_PASS => 'Passed',
+                self::STATUS_REJECT => 'Rejected',
+            ];
+        }
+    }
+
     public function getStatusName()
     {
         return ArrayHelper::getValue(self::getStatusList(), $this->status);
