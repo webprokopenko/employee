@@ -23,9 +23,15 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'email')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'status')->dropDownList(Interview::getStatusList()) ?>
+    <?php if (!$model->getScenario() == Interview::SCENARIO_CREATE): ?>
 
-    <?= $form->field($model, 'employee_id')->dropDownList(ArrayHelper::map(Employee::find()->all(), 'id', 'fullName')) ?>
+        <?= $form->field($model, 'status')->dropDownList(Interview::getStatusList()) ?>
+
+        <?= $form->field($model, 'employee_id')->dropDownList(ArrayHelper::map(Employee::find()->all(), 'id', 'fullName')) ?>
+
+        <?= $form->field($model, 'reject_reason')->textarea(['rows' => 5]) ?>
+
+    <?php endif; ?>
 
     <div class="form-group">
         <?= Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>

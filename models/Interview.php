@@ -20,6 +20,8 @@ use yii\helpers\ArrayHelper;
  */
 class Interview extends ActiveRecord
 {
+    const SCENARIO_CREATE = 'create';
+
     const STATUS_NEW = 1;
     const STATUS_PASS = 2;
     const STATUS_REJECT = 3;
@@ -52,9 +54,17 @@ class Interview extends ActiveRecord
     public function rules()
     {
         return [
-            [['date', 'first_name', 'last_name', 'status'], 'required'],
+            [['date', 'first_name', 'last_name'], 'required'],
+            [['status'], 'required', 'except' => self::SCENARIO_CREATE],
+            [['status'], 'default', 'value' => self::STATUS_NEW],
             [['date'], 'safe'],
-            [['status', 'employee_id'], 'integer'],
+            [['reject_reason'], 'required', 'when' => function (self $model) {
+                    return $model->status == self::STATUS_REJECT;
+                }, 'whenClient' => "function (attribute, value) {
+                    return $('#interview-status').val() == '" . self::STATUS_REJECT. "';
+                }"
+            ],
+            [['status', 'employee_id'], 'integer', 'except' => self::SCENARIO_CREATE],
             [['first_name', 'last_name', 'email'], 'string', 'max' => 255],
             [['reject_reason'], 'string'],
         ];
