@@ -1,6 +1,6 @@
 <?php
 
-namespace tests\codeception\unit\models;
+namespace tests\codeception\unit\forms;
 
 use Yii;
 use yii\codeception\TestCase;
@@ -26,7 +26,7 @@ class ContactFormTest extends TestCase
 
     public function testContact()
     {
-        $model = $this->getMock('app\models\ContactForm', ['validate']);
+        $model = $this->getMock('app\forms\ContactForm', ['validate']);
         $model->expects($this->once())->method('validate')->will($this->returnValue(true));
 
         $model->attributes = [
