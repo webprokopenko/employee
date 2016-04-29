@@ -44,6 +44,11 @@ class Employee extends ActiveRecord
         return ArrayHelper::getValue(self::getStatusList(), $this->status);
     }
 
+    public function getFullName()
+    {
+        return $this->last_name . ' ' . $this->first_name;
+    }
+
     /**
      * @inheritdoc
      */
