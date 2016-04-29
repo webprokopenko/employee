@@ -40,6 +40,39 @@ class Interview extends ActiveRecord
         return ArrayHelper::getValue(self::getStatusList(), $this->status);
     }
 
+    public function afterSave($insert, $changedAttributes)
+    {
+        if (in_array('status', array_keys($changedAttributes)) && $this->status != $changedAttributes['status']) {
+            if ($this->status == self::STATUS_NEW) {
+                if ($this->email) {
+                    Yii::$app->mailer->compose('interview/join', ['model' => $this])
+                        ->setFrom(Yii::$app->params['adminEmail'])
+                        ->setTo($this->email)
+                        ->setSubject('You are joined to interview!')
+                        ->send();
+                }
+            } elseif ($this->status == self::STATUS_PASS) {
+                if ($this->email) {
+                    Yii::$app->mailer->compose('interview/pass', ['model' => $this])
+                        ->setFrom(Yii::$app->params['adminEmail'])
+                        ->setTo($this->email)
+                        ->setSubject('You are passed an interview!')
+                        ->send();
+                }
+            } elseif ($this->status == self::STATUS_REJECT) {
+                if ($this->email) {
+                    Yii::$app->mailer->compose('interview/reject', ['model' => $this])
+                        ->setFrom(Yii::$app->params['adminEmail'])
+                        ->setTo($this->email)
+                        ->setSubject('You are failed an interview')
+                        ->send();
+                }
+            }
+        }
+
+        parent::afterSave($insert, $changedAttributes);
+    }
+
     /**
      * @inheritdoc
      */
