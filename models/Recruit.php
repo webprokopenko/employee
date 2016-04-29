@@ -34,7 +34,7 @@ class Recruit extends ActiveRecord
         return [
             [['order_id', 'employee_id', 'date'], 'required'],
             [['order_id', 'employee_id'], 'integer'],
-            [['date'], 'safe'],
+            [['date'], 'date', 'format' => 'php:Y-m-d'],
             [['employee_id'], 'exist', 'skipOnError' => true, 'targetClass' => Employee::className(), 'targetAttribute' => ['employee_id' => 'id']],
             [['order_id'], 'exist', 'skipOnError' => true, 'targetClass' => Order::className(), 'targetAttribute' => ['order_id' => 'id']],
         ];

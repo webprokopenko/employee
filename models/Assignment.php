@@ -40,7 +40,7 @@ class Assignment extends ActiveRecord
             [['order_id', 'employee_id', 'position_id', 'date', 'rate', 'salary', 'active'], 'required'],
             [['order_id', 'employee_id', 'position_id', 'salary'], 'integer'],
             [['active'], 'boolean'],
-            [['date'], 'safe'],
+            [['date'], 'date', 'format' => 'php:Y-m-d'],
             [['rate'], 'number'],
             [['position_id'], 'exist', 'skipOnError' => true, 'targetClass' => Position::className(), 'targetAttribute' => ['position_id' => 'id']],
             [['employee_id'], 'exist', 'skipOnError' => true, 'targetClass' => Employee::className(), 'targetAttribute' => ['employee_id' => 'id']],

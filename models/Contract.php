@@ -34,7 +34,7 @@ class Contract extends ActiveRecord
         return [
             [['employee_id', 'first_name', 'last_name', 'date_open'], 'required'],
             [['employee_id'], 'integer'],
-            [['date_open', 'date_close'], 'date'],
+            [['date_open', 'date_close'], 'date', 'format' => 'php:Y-m-d'],
             [['close_reason'], 'string'],
             [['first_name', 'last_name'], 'string', 'max' => 255],
         ];
