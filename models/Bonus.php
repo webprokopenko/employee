@@ -3,10 +3,9 @@
 namespace app\models;
 
 use Yii;
-use yii\db\ActiveRecord;
 
 /**
- * This is the model class for table "{{%bonus}}".
+ * This is the model class for table "bonus".
  *
  * @property integer $id
  * @property integer $order_id
@@ -16,14 +15,14 @@ use yii\db\ActiveRecord;
  * @property Employee $employee
  * @property Order $order
  */
-class Bonus extends ActiveRecord
+class Bonus extends \yii\db\ActiveRecord
 {
     /**
      * @inheritdoc
      */
     public static function tableName()
     {
-        return '{{%bonus}}';
+        return 'bonus';
     }
 
     /**
@@ -46,8 +45,8 @@ class Bonus extends ActiveRecord
     {
         return [
             'id' => 'ID',
-            'order_id' => 'Order',
-            'employee_id' => 'Employee',
+            'order_id' => 'Order ID',
+            'employee_id' => 'Employee ID',
             'cost' => 'Cost',
         ];
     }

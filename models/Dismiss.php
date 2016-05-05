@@ -3,10 +3,9 @@
 namespace app\models;
 
 use Yii;
-use yii\db\ActiveRecord;
 
 /**
- * This is the model class for table "{{%dismiss}}".
+ * This is the model class for table "dismiss".
  *
  * @property integer $id
  * @property integer $order_id
@@ -17,14 +16,14 @@ use yii\db\ActiveRecord;
  * @property Employee $employee
  * @property Order $order
  */
-class Dismiss extends ActiveRecord
+class Dismiss extends \yii\db\ActiveRecord
 {
     /**
      * @inheritdoc
      */
     public static function tableName()
     {
-        return '{{%dismiss}}';
+        return 'dismiss';
     }
 
     /**
@@ -35,7 +34,7 @@ class Dismiss extends ActiveRecord
         return [
             [['order_id', 'employee_id', 'date', 'reason'], 'required'],
             [['order_id', 'employee_id'], 'integer'],
-            [['date'], 'date', 'format' => 'php:Y-m-d'],
+            [['date'], 'safe'],
             [['reason'], 'string'],
             [['employee_id'], 'exist', 'skipOnError' => true, 'targetClass' => Employee::className(), 'targetAttribute' => ['employee_id' => 'id']],
             [['order_id'], 'exist', 'skipOnError' => true, 'targetClass' => Order::className(), 'targetAttribute' => ['order_id' => 'id']],
@@ -49,8 +48,8 @@ class Dismiss extends ActiveRecord
     {
         return [
             'id' => 'ID',
-            'order_id' => 'Order',
-            'employee_id' => 'Employee',
+            'order_id' => 'Order ID',
+            'employee_id' => 'Employee ID',
             'date' => 'Date',
             'reason' => 'Reason',
         ];

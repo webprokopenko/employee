@@ -34,9 +34,9 @@ $this->params['breadcrumbs'][] = $this->title;
             'address',
             'email:email',
             [
-                'attribute' => 'status',
-                'value' => $model->getStatusName(),
-            ],
+                'attribute'=>'status',
+                'value'=>$model->getStatusName(),
+            ]
         ],
     ]) ?>
 

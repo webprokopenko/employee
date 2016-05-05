@@ -3,28 +3,27 @@
 namespace app\models;
 
 use Yii;
-use yii\db\ActiveRecord;
 
 /**
- * This is the model class for table "{{%order}}".
+ * This is the model class for table "order".
  *
  * @property integer $id
  * @property string $date
  *
  * @property Assignment[] $assignments
- * @property Dismiss[] $dismisses
  * @property Bonus[] $bonuses
+ * @property Dismiss[] $dismisses
  * @property Recruit[] $recruits
  * @property Vacation[] $vacations
  */
-class Order extends ActiveRecord
+class Order extends \yii\db\ActiveRecord
 {
     /**
      * @inheritdoc
      */
     public static function tableName()
     {
-        return '{{%order}}';
+        return 'order';
     }
 
     /**
@@ -34,7 +33,7 @@ class Order extends ActiveRecord
     {
         return [
             [['date'], 'required'],
-            [['date'], 'date', 'format' => 'php:Y-m-d'],
+            [['date'], 'safe'],
         ];
     }
 
@@ -60,17 +59,17 @@ class Order extends ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getDismisses()
+    public function getBonuses()
     {
-        return $this->hasMany(Dismiss::className(), ['order_id' => 'id']);
+        return $this->hasMany(Bonus::className(), ['order_id' => 'id']);
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getBonuses()
+    public function getDismisses()
     {
-        return $this->hasMany(Bonus::className(), ['order_id' => 'id']);
+        return $this->hasMany(Dismiss::className(), ['order_id' => 'id']);
     }
 
     /**

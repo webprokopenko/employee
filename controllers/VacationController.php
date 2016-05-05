@@ -4,7 +4,7 @@ namespace app\controllers;
 
 use Yii;
 use app\models\Vacation;
-use app\forms\search\VacationSearch;
+use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -35,11 +35,11 @@ class VacationController extends Controller
      */
     public function actionIndex()
     {
-        $searchModel = new VacationSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider = new ActiveDataProvider([
+            'query' => Vacation::find(),
+        ]);
 
         return $this->render('index', [
-            'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
     }

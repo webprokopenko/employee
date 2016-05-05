@@ -4,7 +4,7 @@ namespace app\controllers;
 
 use Yii;
 use app\models\Recruit;
-use app\forms\search\RecruitSearch;
+use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -35,11 +35,11 @@ class RecruitController extends Controller
      */
     public function actionIndex()
     {
-        $searchModel = new RecruitSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider = new ActiveDataProvider([
+            'query' => Recruit::find(),
+        ]);
 
         return $this->render('index', [
-            'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
     }

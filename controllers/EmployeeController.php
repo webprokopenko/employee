@@ -2,17 +2,12 @@
 
 namespace app\controllers;
 
-use app\models\Contract;
-use app\models\Interview;
-use app\models\Order;
-use app\models\Recruit;
 use Yii;
 use app\models\Employee;
-use app\forms\search\EmployeeSearch;
+use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
-use yii\web\ServerErrorHttpException;
 
 /**
  * EmployeeController implements the CRUD actions for Employee model.
@@ -40,11 +35,11 @@ class EmployeeController extends Controller
      */
     public function actionIndex()
     {
-        $searchModel = new EmployeeSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider = new ActiveDataProvider([
+            'query' => Employee::find(),
+        ]);
 
         return $this->render('index', [
-            'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
     }
@@ -64,65 +59,19 @@ class EmployeeController extends Controller
     /**
      * Creates a new Employee model.
      * If creation is successful, the browser will be redirected to the 'view' page.
-     * @param integer $interview_id
-     * @throws \yii\web\ServerErrorHttpException
      * @return mixed
      */
-    public function actionCreate($interview_id = null)
+    public function actionCreate()
     {
         $model = new Employee();
-        $model->order_date = date('Y-m-d');
-        $model->contract_date = date('Y-m-d');
-        $model->recruit_date = date('Y-m-d');
 
-        if ($interview_id) {
-            $interview = $this->findInterviewModel($interview_id);
-            $model->last_name = $interview->last_name;
-            $model->first_name = $interview->first_name;
-            $model->email = $interview->email;
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            return $this->redirect(['view', 'id' => $model->id]);
         } else {
-            $interview = null;
+            return $this->render('create', [
+                'model' => $model,
+            ]);
         }
-
-        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
-            $transaction = Yii::$app->db->beginTransaction();
-            try {
-                if ($interview) {
-                    $interview->status = Interview::STATUS_PASS;
-                    $interview->save();
-                }
-
-                $model->save(false);
-
-                $order = new Order();
-                $order->date = $model->order_date;
-                $order->save(false);
-
-                $recruit = new Contract();
-                $recruit->employee_id = $model->id;
-                $recruit->last_name = $model->last_name;
-                $recruit->first_name = $model->first_name;
-                $recruit->date_open = $model->contract_date;
-                $recruit->save(false);
-
-                $recruit = new Recruit();
-                $recruit->employee_id = $model->id;
-                $recruit->order_id = $order->id;
-                $recruit->date = $model->recruit_date;
-                $recruit->save(false);
-
-                $transaction->commit();
-                Yii::$app->session->setFlash('success', 'Employee is recruit.');
-                return $this->redirect(['view', 'id' => $model->id]);
-            } catch (\Exception $e) {
-                $transaction->rollBack();
-                throw new ServerErrorHttpException($e->getMessage());
-            }
-        }
-
-        return $this->render('create', [
-            'model' => $model,
-        ]);
     }
 
     /**
@@ -167,20 +116,6 @@ class EmployeeController extends Controller
     protected function findModel($id)
     {
         if (($model = Employee::findOne($id)) !== null) {
-            return $model;
-        } else {
-            throw new NotFoundHttpException('The requested page does not exist.');
-        }
-    }
-
-    /**
-     * @param integer $id
-     * @return Employee the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    protected function findInterviewModel($id)
-    {
-        if (($model = Interview::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');

@@ -3,10 +3,9 @@
 namespace app\models;
 
 use Yii;
-use yii\db\ActiveRecord;
 
 /**
- * This is the model class for table "{{%recruit}}".
+ * This is the model class for table "recruit".
  *
  * @property integer $id
  * @property integer $order_id
@@ -16,14 +15,14 @@ use yii\db\ActiveRecord;
  * @property Employee $employee
  * @property Order $order
  */
-class Recruit extends ActiveRecord
+class Recruit extends \yii\db\ActiveRecord
 {
     /**
      * @inheritdoc
      */
     public static function tableName()
     {
-        return '{{%recruit}}';
+        return 'recruit';
     }
 
     /**
@@ -34,7 +33,7 @@ class Recruit extends ActiveRecord
         return [
             [['order_id', 'employee_id', 'date'], 'required'],
             [['order_id', 'employee_id'], 'integer'],
-            [['date'], 'date', 'format' => 'php:Y-m-d'],
+            [['date'], 'safe'],
             [['employee_id'], 'exist', 'skipOnError' => true, 'targetClass' => Employee::className(), 'targetAttribute' => ['employee_id' => 'id']],
             [['order_id'], 'exist', 'skipOnError' => true, 'targetClass' => Order::className(), 'targetAttribute' => ['order_id' => 'id']],
         ];
@@ -47,8 +46,8 @@ class Recruit extends ActiveRecord
     {
         return [
             'id' => 'ID',
-            'order_id' => 'Order',
-            'employee_id' => 'Employee',
+            'order_id' => 'Order ID',
+            'employee_id' => 'Employee ID',
             'date' => 'Date',
         ];
     }

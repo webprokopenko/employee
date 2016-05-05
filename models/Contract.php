@@ -3,10 +3,9 @@
 namespace app\models;
 
 use Yii;
-use yii\db\ActiveRecord;
 
 /**
- * This is the model class for table "{{%contract}}".
+ * This is the model class for table "contract".
  *
  * @property integer $id
  * @property integer $employee_id
@@ -16,14 +15,14 @@ use yii\db\ActiveRecord;
  * @property string $date_close
  * @property string $close_reason
  */
-class Contract extends ActiveRecord
+class Contract extends \yii\db\ActiveRecord
 {
     /**
      * @inheritdoc
      */
     public static function tableName()
     {
-        return '{{%contract}}';
+        return 'contract';
     }
 
     /**
@@ -34,7 +33,7 @@ class Contract extends ActiveRecord
         return [
             [['employee_id', 'first_name', 'last_name', 'date_open'], 'required'],
             [['employee_id'], 'integer'],
-            [['date_open', 'date_close'], 'date', 'format' => 'php:Y-m-d'],
+            [['date_open', 'date_close'], 'safe'],
             [['close_reason'], 'string'],
             [['first_name', 'last_name'], 'string', 'max' => 255],
         ];
@@ -47,7 +46,7 @@ class Contract extends ActiveRecord
     {
         return [
             'id' => 'ID',
-            'employee_id' => 'Employee',
+            'employee_id' => 'Employee ID',
             'first_name' => 'First Name',
             'last_name' => 'Last Name',
             'date_open' => 'Date Open',

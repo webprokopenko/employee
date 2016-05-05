@@ -1,8 +1,5 @@
 <?php
 
-use app\models\Employee;
-use app\models\Interview;
-use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
@@ -23,15 +20,11 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'email')->textInput(['maxlength' => true]) ?>
 
-    <?php if ($model->getScenario() == Interview::SCENARIO_DEFAULT): ?>
+    <?= $form->field($model, 'status')->dropDownList(\app\models\Interview::getStatusList()) ?>
 
-        <?= $form->field($model, 'status')->dropDownList($model->getNextStatusList()) ?>
+    <?= $form->field($model, 'reject_reason')->textarea(['rows' => 6]) ?>
 
-        <?= $form->field($model, 'employee_id')->dropDownList(ArrayHelper::map(Employee::find()->all(), 'id', 'fullName')) ?>
-
-        <?= $form->field($model, 'reject_reason')->textarea(['rows' => 5]) ?>
-
-    <?php endif; ?>
+    <?= $form->field($model, 'employee_id')->dropDownList(\yii\helpers\ArrayHelper::map(\app\models\Employee::find()->all(),'id','fullName')) ?>
 
     <div class="form-group">
         <?= Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>

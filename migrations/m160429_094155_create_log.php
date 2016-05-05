@@ -9,7 +9,7 @@ class m160429_094155_create_log extends Migration
         $this->createTable('{{%log}}', [
             'id' => $this->primaryKey(),
             'created_at' => $this->integer()->notNull(),
-            'user_id' => $this->integer()->notNull(),
+            'user_id' => $this->integer(),
             'message' => $this->text(),
         ]);
 

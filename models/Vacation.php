@@ -3,10 +3,9 @@
 namespace app\models;
 
 use Yii;
-use yii\db\ActiveRecord;
 
 /**
- * This is the model class for table "{{%vacation}}".
+ * This is the model class for table "vacation".
  *
  * @property integer $id
  * @property integer $order_id
@@ -17,14 +16,14 @@ use yii\db\ActiveRecord;
  * @property Employee $employee
  * @property Order $order
  */
-class Vacation extends ActiveRecord
+class Vacation extends \yii\db\ActiveRecord
 {
     /**
      * @inheritdoc
      */
     public static function tableName()
     {
-        return '{{%vacation}}';
+        return 'vacation';
     }
 
     /**
@@ -48,8 +47,8 @@ class Vacation extends ActiveRecord
     {
         return [
             'id' => 'ID',
-            'order_id' => 'Order',
-            'employee_id' => 'Employee',
+            'order_id' => 'Order ID',
+            'employee_id' => 'Employee ID',
             'date_from' => 'Date From',
             'date_to' => 'Date To',
         ];

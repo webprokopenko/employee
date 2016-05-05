@@ -3,24 +3,28 @@
 namespace app\models;
 
 use Yii;
-use yii\db\ActiveRecord;
 
 /**
- * This is the model class for table "{{%position}}".
+ * This is the model class for table "position".
  *
  * @property integer $id
  * @property string $name
  *
  * @property Assignment[] $assignments
  */
-class Position extends ActiveRecord
+class Position extends \yii\db\ActiveRecord
 {
+    public function getName()
+    {
+        return $this->name;
+    }
+
     /**
      * @inheritdoc
      */
     public static function tableName()
     {
-        return '{{%position}}';
+        return 'position';
     }
 
     /**

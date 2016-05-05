@@ -4,7 +4,6 @@ use yii\helpers\Html;
 use yii\grid\GridView;
 
 /* @var $this yii\web\View */
-/* @var $searchModel app\forms\search\ContractSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = 'Contracts';
@@ -19,14 +18,16 @@ $this->params['breadcrumbs'][] = $this->title;
     </p>
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
         'columns' => [
+            ['class' => 'yii\grid\SerialColumn'],
+
             'id',
             'employee_id',
             'first_name',
             'last_name',
             'date_open',
-            'date_close',
+            // 'date_close',
+            // 'close_reason:ntext',
 
             ['class' => 'yii\grid\ActionColumn'],
         ],

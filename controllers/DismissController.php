@@ -4,7 +4,7 @@ namespace app\controllers;
 
 use Yii;
 use app\models\Dismiss;
-use app\forms\search\DismissSearch;
+use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -35,11 +35,11 @@ class DismissController extends Controller
      */
     public function actionIndex()
     {
-        $searchModel = new DismissSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider = new ActiveDataProvider([
+            'query' => Dismiss::find(),
+        ]);
 
         return $this->render('index', [
-            'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
     }

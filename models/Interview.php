@@ -3,11 +3,10 @@
 namespace app\models;
 
 use Yii;
-use yii\db\ActiveRecord;
 use yii\helpers\ArrayHelper;
 
 /**
- * This is the model class for table "{{%interview}}".
+ * This is the model class for table "interview".
  *
  * @property integer $id
  * @property string $date
@@ -17,99 +16,35 @@ use yii\helpers\ArrayHelper;
  * @property integer $status
  * @property string $reject_reason
  * @property integer $employee_id
+ *
+ * @property Employee $employee
  */
-class Interview extends ActiveRecord
+class Interview extends \yii\db\ActiveRecord
 {
-    const SCENARIO_CREATE = 'create';
+    const SCENARIO_CREATE   =   'create';
 
-    const STATUS_NEW = 1;
-    const STATUS_PASS = 2;
-    const STATUS_REJECT = 3;
+    const STAT_NEW  =   1;
+    const STAT_PASSED  =   2;
+    const STAT_REJECT   =   3;
 
-    public static function getStatusList()
-    {
-        return [
-            self::STATUS_NEW => 'New',
-            self::STATUS_PASS => 'Passed',
-            self::STATUS_REJECT => 'Rejected',
+    public static function getStatusList(){
+        return[
+            self::STAT_NEW  =>  'New',
+            self::STAT_PASSED  =>  'Passed',
+            self::STAT_REJECT  =>  'Rejected',
         ];
-    }
-
-    public function getNextStatusList()
-    {
-        if ($this->status == self::STATUS_PASS) {
-            return [
-                self::STATUS_PASS => 'Passed',
-            ];
-        } elseif ($this->status == self::STATUS_REJECT) {
-            return [
-                self::STATUS_PASS => 'Passed',
-                self::STATUS_REJECT => 'Rejected',
-            ];
-        } else {
-            return [
-                self::STATUS_NEW => 'New',
-                self::STATUS_PASS => 'Passed',
-                self::STATUS_REJECT => 'Rejected',
-            ];
-        }
     }
 
     public function getStatusName()
     {
-        return ArrayHelper::getValue(self::getStatusList(), $this->status);
+        return ArrayHelper::getValue(self::getStatusList(),$this->status);
     }
-
-    public static function create($lastName, $firstName, $email, $date)
-    {
-        $interview = new Interview();
-        $interview->date = $date;
-        $interview->last_name = $lastName;
-        $interview->first_name = $firstName;
-        $interview->email = $email;
-        $interview->status = Interview::STATUS_NEW;
-        return $interview;
-    }
-
-    public function afterSave($insert, $changedAttributes)
-    {
-        if (in_array('status', array_keys($changedAttributes)) && $this->status != $changedAttributes['status']) {
-            if ($this->status == self::STATUS_NEW) {
-
-            } elseif ($this->status == self::STATUS_PASS) {
-                if ($this->email) {
-                    Yii::$app->mailer->compose('interview/pass', ['model' => $this])
-                        ->setFrom(Yii::$app->params['adminEmail'])
-                        ->setTo($this->email)
-                        ->setSubject('You are passed an interview!')
-                        ->send();
-                }
-                $log = new Log();
-                $log->message = $this->last_name . ' ' . $this->first_name . ' is passed an interview';
-                $log->save();
-            } elseif ($this->status == self::STATUS_REJECT) {
-                if ($this->email) {
-                    Yii::$app->mailer->compose('interview/reject', ['model' => $this])
-                        ->setFrom(Yii::$app->params['adminEmail'])
-                        ->setTo($this->email)
-                        ->setSubject('You are failed an interview')
-                        ->send();
-                }
-                $log = new Log();
-                $log->message = $this->last_name . ' ' . $this->first_name . ' is failed an interview';
-                $log->save();
-            }
-        }
-
-        parent::afterSave($insert, $changedAttributes);
-    }
-
     /**
      * @inheritdoc
      */
     public static function tableName()
     {
-        return '{{%interview}}';
+        return 'interview';
     }
 
     /**
@@ -120,17 +55,17 @@ class Interview extends ActiveRecord
         return [
             [['date', 'first_name', 'last_name'], 'required'],
             [['status'], 'required', 'except' => self::SCENARIO_CREATE],
-            [['status'], 'default', 'value' => self::STATUS_NEW],
-            [['date'], 'date', 'format' => 'php:Y-m-d'],
-            [['reject_reason'], 'required', 'when' => function (self $model) {
-                    return $model->status == self::STATUS_REJECT;
-                }, 'whenClient' => "function (attribute, value) {
-                    return $('#interview-status').val() == '" . self::STATUS_REJECT. "';
+
+            [['date'],'safe'],
+            [['reject_reason'], 'required','when'=>function (self $model){
+                    return $model->status == self::STAT_REJECT;
+                }, 'whenClient'=>"function(attribute, value){
+                    return $('#interview-status').val() == '". self::STAT_NEW. "';
                 }"
             ],
-            [['status', 'employee_id'], 'integer', 'except' => self::SCENARIO_CREATE],
+            [['status', 'employee_id'], 'integer', 'except'=>self::SCENARIO_CREATE],
             [['first_name', 'last_name', 'email'], 'string', 'max' => 255],
-            [['reject_reason'], 'string'],
+            [['reject_reason'], 'string']
         ];
     }
 
@@ -147,7 +82,15 @@ class Interview extends ActiveRecord
             'email' => 'Email',
             'status' => 'Status',
             'reject_reason' => 'Reject Reason',
-            'employee_id' => 'Employee',
+            'employee_id' => 'Employee ID',
         ];
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getEmployee()
+    {
+        return $this->hasOne(Employee::className(), ['id' => 'employee_id']);
     }
 }

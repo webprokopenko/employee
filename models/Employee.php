@@ -3,11 +3,10 @@
 namespace app\models;
 
 use Yii;
-use yii\db\ActiveRecord;
 use yii\helpers\ArrayHelper;
 
 /**
- * This is the model class for table "{{%employee}}".
+ * This is the model class for table "employee".
  *
  * @property integer $id
  * @property string $first_name
@@ -17,92 +16,44 @@ use yii\helpers\ArrayHelper;
  * @property integer $status
  *
  * @property Assignment[] $assignments
- * @property Dismiss[] $dismisses
  * @property Bonus[] $bonuses
+ * @property Dismiss[] $dismisses
+ * @property Interview[] $interviews
  * @property Recruit[] $recruits
  * @property Vacation[] $vacations
  */
-class Employee extends ActiveRecord
+class Employee extends \yii\db\ActiveRecord
 {
-    const STATUS_PROBATION = 1;
-    const STATUS_WORK = 2;
-    const STATUS_VACATION = 3;
-    const STATUS_DISMISS = 4;
-
-    const SCENARIO_CREATE = 'create';
-
-    public $order_date;
-    public $contract_date;
-    public $recruit_date;
+    const STATUS_PROBATION  =   1;
+    const STATUS_WORK   =   2;
+    const STATUS_VOCATION   =   3;
+    const STATUS_DISMISS    =   4;
 
     public static function getStatusList()
     {
-        return [
+        return  [
             self::STATUS_PROBATION => 'Probation',
-            self::STATUS_WORK => 'Work',
-            self::STATUS_VACATION => 'Vacation',
-            self::STATUS_DISMISS => 'Dismiss',
+            self::STATUS_WORK   =>  'Work',
+            self::STATUS_VOCATION => 'Vacation',
+            self::STATUS_DISMISS    =>  'Dismiss',
         ];
     }
 
     public function getStatusName()
     {
-        return ArrayHelper::getValue(self::getStatusList(), $this->status);
+        return ArrayHelper::getValue(self::getStatusList(),$this->status);
     }
 
     public function getFullName()
     {
         return $this->last_name . ' ' . $this->first_name;
     }
-
-    public function afterSave($insert, $changedAttributes)
-    {
-        if (in_array('status', array_keys($changedAttributes)) && $this->status != $changedAttributes['status']) {
-            if ($this->status == self::STATUS_PROBATION) {
-                if ($this->email) {
-                    Yii::$app->mailer->compose('employee/probation', ['model' => $this])
-                        ->setFrom(Yii::$app->params['adminEmail'])
-                        ->setTo($this->email)
-                        ->setSubject('You are recruit on probation!')
-                        ->send();
-                    $log = new Log();
-                    $log->message = $this->last_name . ' ' . $this->first_name . ' is joined to interview';
-                    $log->save();
-                }
-            } elseif ($this->status == self::STATUS_WORK) {
-                if ($this->email) {
-                    Yii::$app->mailer->compose('employee/work', ['model' => $this])
-                        ->setFrom(Yii::$app->params['adminEmail'])
-                        ->setTo($this->email)
-                        ->setSubject('You are recruit!')
-                        ->send();
-                    $log = new Log();
-                    $log->message = $this->last_name . ' ' . $this->first_name . ' is passed an interview';
-                    $log->save();
-                }
-            } elseif ($this->status == self::STATUS_DISMISS) {
-                if ($this->email) {
-                    Yii::$app->mailer->compose('employee/dismiss', ['model' => $this])
-                        ->setFrom(Yii::$app->params['adminEmail'])
-                        ->setTo($this->email)
-                        ->setSubject('You are failed an interview')
-                        ->send();
-                    $log = new Log();
-                    $log->message = $this->last_name . ' ' . $this->first_name . ' is failed an interview';
-                    $log->save();
-                }
-            }
-        }
-
-        parent::afterSave($insert, $changedAttributes);
-    }
-
     /**
      * @inheritdoc
      */
     public static function tableName()
     {
-        return '{{%employee}}';
+        return 'employee';
     }
 
     /**
@@ -113,8 +64,6 @@ class Employee extends ActiveRecord
         return [
             [['first_name', 'last_name', 'address', 'status'], 'required'],
             [['status'], 'integer'],
-            [['order_date', 'contract_date', 'recruit_date'], 'required', 'on' => self::SCENARIO_CREATE],
-            [['order_date', 'contract_date', 'recruit_date'], 'date', 'on' => self::SCENARIO_CREATE],
             [['first_name', 'last_name', 'address', 'email'], 'string', 'max' => 255],
         ];
     }
@@ -131,9 +80,6 @@ class Employee extends ActiveRecord
             'address' => 'Address',
             'email' => 'Email',
             'status' => 'Status',
-            'order_date' => 'Order Date',
-            'contract_date' => 'Contract Date',
-            'recruit_date' => 'Recruit Date',
         ];
     }
 
@@ -148,6 +94,14 @@ class Employee extends ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
+    public function getBonuses()
+    {
+        return $this->hasMany(Bonus::className(), ['employee_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
     public function getDismisses()
     {
         return $this->hasMany(Dismiss::className(), ['employee_id' => 'id']);
@@ -156,9 +110,9 @@ class Employee extends ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getBonuses()
+    public function getInterviews()
     {
-        return $this->hasMany(Bonus::className(), ['employee_id' => 'id']);
+        return $this->hasMany(Interview::className(), ['employee_id' => 'id']);
     }
 
     /**

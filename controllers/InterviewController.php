@@ -2,11 +2,9 @@
 
 namespace app\controllers;
 
-use app\forms\InterviewJoinForm;
-use app\services\StaffService;
 use Yii;
 use app\models\Interview;
-use app\forms\search\InterviewSearch;
+use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -37,11 +35,11 @@ class InterviewController extends Controller
      */
     public function actionIndex()
     {
-        $searchModel = new InterviewSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider = new ActiveDataProvider([
+            'query' => Interview::find(),
+        ]);
 
         return $this->render('index', [
-            'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
     }
@@ -63,25 +61,15 @@ class InterviewController extends Controller
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionJoin()
+    public function actionCreate()
     {
-        $form = new InterviewJoinForm();
+        $model = new Interview();
 
-        if ($form->load(Yii::$app->request->post()) && $form->validate()) {
-
-            $service = new StaffService();
-
-            $model = $service->joinToInterview(
-                $form->lastName,
-                $form->firstName,
-                $form->email,
-                $form->date
-            );
-
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
-            return $this->render('join', [
-                'joinForm' => $form,
+            return $this->render('create', [
+                'model' => $model,
             ]);
         }
     }

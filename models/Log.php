@@ -3,26 +3,23 @@
 namespace app\models;
 
 use Yii;
-use yii\behaviors\BlameableBehavior;
-use yii\behaviors\TimestampBehavior;
-use yii\db\ActiveRecord;
 
 /**
- * This is the model class for table "{{%log}}".
+ * This is the model class for table "log".
  *
  * @property integer $id
  * @property integer $created_at
  * @property integer $user_id
  * @property string $message
  */
-class Log extends ActiveRecord
+class Log extends \yii\db\ActiveRecord
 {
     /**
      * @inheritdoc
      */
     public static function tableName()
     {
-        return '{{%log}}';
+        return 'log';
     }
 
     /**
@@ -31,8 +28,8 @@ class Log extends ActiveRecord
     public function rules()
     {
         return [
-            [['user_id'], 'required'],
-            [['user_id'], 'integer'],
+            [['created_at'], 'required'],
+            [['created_at', 'user_id'], 'integer'],
             [['message'], 'string'],
         ];
     }
@@ -44,26 +41,9 @@ class Log extends ActiveRecord
     {
         return [
             'id' => 'ID',
-            'user_id' => 'User',
+            'created_at' => 'Created At',
+            'user_id' => 'User ID',
             'message' => 'Message',
-        ];
-    }
-
-    public function behaviors()
-    {
-        return [
-            [
-                'class' => TimestampBehavior::className(),
-                'attributes' => [
-                    self::EVENT_BEFORE_INSERT => 'created_at',
-                ],
-            ],
-            [
-                'class' => BlameableBehavior::className(),
-                'attributes' => [
-                    self::EVENT_BEFORE_INSERT => 'user_id',
-                ],
-            ],
         ];
     }
 }
